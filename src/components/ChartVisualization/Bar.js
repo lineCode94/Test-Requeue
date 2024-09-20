@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Chart } from "react-google-charts";
+import Filter from "./Filter";
 const Bar = () => {
   const [neoData, setNeoData] = useState([]);
-  console.log(neoData);
+  const [FilteredData, setFilteredData] = useState([]);
+  console.log(FilteredData);
   useEffect(() => {
     // Fetch data from the NASA API
     axios
       .get("https://api.nasa.gov/neo/rest/v1/neo/browse?api_key=DEMO_KEY")
       .then((response) => {
-        const neos = response.data.near_earth_objects;
+        const neos = response?.data?.near_earth_objects;
 
         // Sort by average estimated diameter in descending order
         const sortedNeos = neos.sort((a, b) => {
@@ -25,6 +27,7 @@ const Bar = () => {
         });
 
         setNeoData(sortedNeos);
+        setFilteredData(sortedNeos);
       })
       .catch((error) => {
         console.error("Error fetching data:", error);
@@ -33,10 +36,10 @@ const Bar = () => {
   //chart data
   const chartData = [
     ["NEO Name", "Min Diameter (km)", "Max Diameter (km)"],
-    ...neoData.map((neo) => [
-      neo.name,
-      neo.estimated_diameter.kilometers.estimated_diameter_min,
-      neo.estimated_diameter.kilometers.estimated_diameter_max,
+    ...FilteredData.map((neo) => [
+      neo.name, // This should be a string
+      parseFloat(neo.minDiameter),
+      parseFloat(neo.maxDiameter),
     ]),
   ];
   const options = {
@@ -52,8 +55,8 @@ const Bar = () => {
     bars: "horizontal",
   };
   return (
-    <div>
-      {" "}
+    <div className="flex">
+      <Filter setFilteredData={setFilteredData} neoData={neoData} />
       <Chart
         chartType="BarChart"
         width="100%"
