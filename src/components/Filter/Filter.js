@@ -18,7 +18,7 @@ const Filter = ({ neoData, setFilteredData }) => {
       {" "}
       <div>
         <select value={selectedBody} onChange={handleBodyChange}>
-          <option value="">All</option>
+          <option value="">orbiting body</option>
           {neoData.map((neo, index) => (
             <option key={index}>{neo.name}</option>
           ))}
